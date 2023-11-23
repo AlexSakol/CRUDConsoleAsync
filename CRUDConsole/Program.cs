@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using CRUDConsole;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Channels;
 
 var builder = new ConfigurationBuilder();
 builder.SetBasePath(Directory.GetCurrentDirectory());
@@ -112,9 +113,13 @@ async Task RemoveGoodAsync(int id)
     using(DataContext context = new(options))
     {
         Good? good = await context.Goods.FindAsync(id);
-        if(good != null) context.Goods.Remove(good);
-        await context.SaveChangesAsync();
-        await Console.Out.WriteLineAsync("Товар успешно удален");
+        if (good != null)
+        {
+            context.Goods.Remove(good);
+            await context.SaveChangesAsync();
+            await Console.Out.WriteLineAsync("Товар успешно удален");
+        }
+        else await Console.Out.WriteLineAsync("Товар с указанным номером не найден");
     } 
 }
 
